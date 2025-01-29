@@ -1,0 +1,12 @@
+Plots are in the following order: 
+
+tumor intra-patient 2: id vs ii
+tumor intra-patient 3: id vs ii
+tumor intra-patient 6: ie vs ii
+tumor intra-patient 8: ie vs ii
+tumor intra-patient 1: ieb vs iec
+tumor intra-patient 4: iib vs iic
+tumor intra-patient 5: iib vs iic
+tumor intra-patient 6: ieb vs iec
+tumor intra-patient 7: ieb vs iec
+tumor intra-patient 8: ieb vs iec

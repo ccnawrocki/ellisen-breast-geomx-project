@@ -1,0 +1,40 @@
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+
+# R files #
+.Rhistory
+.Rproj.user
+
+# Packages #
+############
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Data #
+########
+# No data will be uploaded until after publication
+*.xlsx
+*.csv
+*.RDS
+
+# Plots #
+#########
+# No plots will be uploaded until after publication
+*.pdf
+*.html
+
+# Folders #
+###########
+learning_archive/
+meeting_presentations/
+*/learning_and_archived/
+
+
