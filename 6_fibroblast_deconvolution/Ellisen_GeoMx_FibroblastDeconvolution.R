@@ -176,7 +176,7 @@ proptestfunc <- function(ct, .contr) {
   tryCatch({
     
     testdata <- filter(fibdcvn_long, celltype == ct)
-    modout <- glmer(formula = round(ncells*prop, digits = 0) ~ 1+group + (1+group|patient), weights = testdata$ncells, data = testdata, family = binomial(link = "logit"))
+    modout <- glmer(formula = prop ~ 1+group + (1+group|patient), weights = testdata$ncells, data = testdata, family = binomial(link = "logit"))
     testout <- (multcomp::glht(model = modout, linfct = matrix(contrast_list[[.contr]], nrow = 1, byrow = T),
                               alternative = "two.sided",
                               rhs = 0)) |> summary(test = univariate())
@@ -200,9 +200,6 @@ contrast_list <- list(
   "iib / idb" = mm[fibmeta$infiltration_type == "iib",] |> colMeans() - mm[fibmeta$infiltration_type == "idb",] |> colMeans()
 )
 
-proptestfunc(ct = "fibroblast", .contr = contrast_list$`ieb / iib`)
-testdata <- filter(fibdcvn_long, celltype == "fibroblast")
-modout <- glmer(formula = round(ncells*prop, digits = 0) ~ 1+group + (1+group|patient), weights = testdata$ncells, data = testdata, family = binomial(link = "logit"))
 res <- lapply(X = names(contrast_list), FUN = purrr::map, .x = unique(fibdcvn_long$celltype), .f = proptestfunc)
 res <- bind_rows(res)
 res <- group_by(res, contrast) |> mutate(fdr = p.adjust(p = pval, method = "BH"))
