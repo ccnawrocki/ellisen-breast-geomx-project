@@ -1,6 +1,21 @@
 ## Differential Abundance Testing Checks ##
 ### Cole Nawrocki ###
 
+# To answer: 
+# log2 norm? 
+# What if you do not use counts? Will the total number be accurate?
+# Which model? 
+# Singular fits?
+
+data("mini_geomx_dataset")
+mini_geomx_dataset$raw
+mini_geomx_dataset$normalized
+summary(mini_geomx_dataset$normalized)
+
+summary(norm)
+hist(mini_geomx_dataset$normalized[,3])
+hist(norm[,1])
+
 set.seed(2001)
 rm(list = ls())
 .libPaths()
@@ -22,7 +37,7 @@ library(Seurat)
 meta <- readxl::read_excel("meta_cleaned_v5.xlsx") |> as.data.frame()
 rownames(meta) <- meta$aoi_id
 cts <- read.csv(file = "counts.csv", row.names = 1)
-norm <- read.csv(file = "q3norm.csv", row.names = 1)
+norm <- read.csv(file = "q3norm_nonlog.csv", row.names = 1)
 
 refds <- readRDS("6_fibroblast_deconvolution/BREAST_fibro_tumour.rds")
 refds$cell_ID <- colnames(refds)
@@ -82,7 +97,7 @@ proptestfunc <- function(ct, .contr) {
   tryCatch({
     
     testdata <- filter(fibdcvn_long, celltype == ct)
-    modout <- glmer(formula = prop ~ 1+group + (1+group|patient), weights = testdata$ncells, data = testdata, family = binomial(link = "logit"))
+    modout <- glmer(formula = prop ~ 1+group + (1+group|patient), weights = testdata$ncells, data = testdata, family = binomial(link = "logit"), )
     testout <- (multcomp::glht(model = modout, linfct = matrix(contrast_list[[.contr]], nrow = 1, byrow = T),
                                alternative = "two.sided",
                                rhs = 0)) |> summary(test = univariate())
@@ -140,7 +155,7 @@ proptestfunc <- function(ct, .contr) {
   tryCatch({
     
     testdata <- filter(fibdcvn_long, celltype == ct)
-    modout <- glmer(formula = (prop+0.001) ~ 1+group + (1+group|patient), weights = testdata$ncells, data = testdata, family = binomial(link = "logit"))
+    modout <- glmer(formula = (prop+0.001) ~ 1+group + (1+1|patient), weights = testdata$ncells, data = testdata, family = binomial(link = "logit"))
     testout <- (multcomp::glht(model = modout, linfct = matrix(contrast_list[[.contr]], nrow = 1, byrow = T),
                                alternative = "two.sided",
                                rhs = 0)) |> summary(test = univariate())
