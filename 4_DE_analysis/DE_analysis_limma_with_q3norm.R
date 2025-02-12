@@ -72,6 +72,7 @@ contrast_list <- list(
 
 limmafit <- lmFit(object = norm, design = mm)
 
+# Not totally sure if this is right
 voomplot <- data.frame(avgs = (norm |> apply(MARGIN = 1, FUN = mean)),
                        root_sds = (norm |> apply(MARGIN = 1, FUN = sd)) |> sqrt())
 ggplot(voomplot) + 
@@ -120,7 +121,7 @@ for (c in names(contrast_list)) {
     mat <- norm[toplot, idx, drop = F] |> apply(1, scale) |> t()
     hm <- Heatmap(matrix = mat, 
                   top_annotation = ha, 
-                  name = "Scaled\nlog2(CPM + 1)", 
+                  name = "Scaled\nlog2(Q3Norm+1)", 
                   cluster_columns = F, cluster_rows = F,
                   width = ncol(mat)*unit(3, "mm"), 
                   height = nrow(mat)*unit(1.5, "mm"),
@@ -171,6 +172,7 @@ contrast_list <- list(
 
 limmafit <- lmFit(object = norm, design = mm)
 
+# Not totally sure if this is right
 voomplot <- data.frame(avgs = (norm |> apply(MARGIN = 1, FUN = mean)),
                        root_sds = (norm |> apply(MARGIN = 1, FUN = sd)) |> sqrt())
 ggplot(voomplot) + 
@@ -217,7 +219,7 @@ for (c in names(contrast_list)) {
     mat <- norm[toplot, idx, drop = F] |> apply(1, scale) |> t()
     hm <- Heatmap(matrix = mat, 
                   top_annotation = ha, 
-                  name = "Scaled\nlog2(CPM + 1)", 
+                  name = "Scaled\nlog2(Q3Norm+1)", 
                   cluster_columns = F, cluster_rows = F,
                   width = ncol(mat)*unit(3, "mm"), 
                   height = nrow(mat)*unit(1.5, "mm"),
@@ -233,4 +235,3 @@ dev.off()
 
 
 # This all took about 6 hours
-
