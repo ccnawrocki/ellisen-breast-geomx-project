@@ -58,6 +58,7 @@ fibdcvn <- spatialdecon(norm = fibnorm,
 ha1 <- HeatmapAnnotation(type = fibmeta$infiltration_type, 
                          col = list(type = c("ieb"="dodgerblue", "iib"="purple", "idb"="orange")))
 mat <- fibdcvn$prop_of_all
+
 Heatmap(mat,
         show_column_names = T, 
         width = ncol(fibdcvn$beta)*unit(5, "mm"),
