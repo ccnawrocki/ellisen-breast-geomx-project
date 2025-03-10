@@ -1,4 +1,5 @@
 library(ggprism)
+library(ggplot2)
 
 pdf("ellisen_plots.pdf", width = 6, height = 8)
 
@@ -84,3 +85,23 @@ fibdcvnres |> filter(celltype != "hsp_tpCAF") |>
   geom_vline(xintercept = 0, linewidth = 0.2)
 
 dev.off()
+
+### TUMOR VOLCANO PLOT
+tumderes <- read.csv("4_DE_analysis/comparisons_first_cohort/tumor id vs ii+ie limma.csv", row.names = 1)
+tumderes$significance <- "not significant"
+tumderes[tumderes$logFC > 0 & tumderes$adj.P.Val < 0.05,]$significance <- "Padj<0.05, up in cold"
+tumderes[tumderes$logFC < 0 & tumderes$adj.P.Val < 0.05,]$significance <- "Padj<0.05, up in hot"
+ggplot() + 
+  geom_point(data = tumderes, mapping = aes(x = logFC, y = -log10(adj.P.Val), color = significance)) +
+  ggrepel::geom_text_repel(data = dplyr::filter(tumderes, target %in% c("MGP", "VIM", "HLA-DRB1", "B2M", "TAP1", "TACSTD2", "CLDN1", "CLDN7") & logFC < 0), 
+                           mapping = aes(x = logFC, y = -log10(adj.P.Val), label = target), size = 3,
+                           max.overlaps = 5, ylim = c(2, 10), xlim = c(-2, -0.5), force_pull = 0, min.segment.length = 0, position = ggrepel::position_nudge_repel(y = 1), box.padding = 2) +
+  ggrepel::geom_text_repel(data = dplyr::filter(tumderes, target %in% c("MGP", "VIM", "HLA-DRB1", "B2M", "TAP1", "TACSTD2", "CLDN1", "CLDN7") & logFC > 0), 
+                           mapping = aes(x = logFC, y = -log10(adj.P.Val), label = target), size = 3,
+                           max.overlaps = 8, ylim = c(2, 20), xlim = c(0, 3), force_pull = 0, min.segment.length = 0, position = ggrepel::position_nudge_repel(y = 1), box.padding = 3) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "darkgrey", linewidth = 1) + 
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "darkgrey", linewidth = 1) + 
+  theme_prism() + theme(legend.position = c(0.15, 0.85), legend.text = element_text(size = 10)) + guides(y = "prism_offset_minor") + 
+  scale_color_manual(values = c("black", "dodgerblue", "red3")) +
+  labs(x = "log2FC (cold/hot)", y = "-log10(Padj)", title = "Differentially Expressed\nGenes for PanCK+ Cells")
+

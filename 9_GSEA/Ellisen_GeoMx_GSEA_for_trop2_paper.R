@@ -22,8 +22,8 @@ theme_update(axis.title.y = element_blank(),
              axis.ticks.y = element_blank(), 
              panel.grid.minor.y = element_blank(), 
              panel.grid.major.y = element_blank(),
-             panel.grid.major.x = element_line(color = "black", linewidth = 0.05),
-             panel.grid.minor.x = element_line(color = "black", linewidth = 0.05))
+             panel.grid.major.x = element_blank(),
+             panel.grid.minor.x = element_blank())
 
 # Gene sets
 hallmarkgenesets <- msigdbr(species = "Homo sapiens", category = "H") |> 
@@ -51,8 +51,10 @@ tum_hallmark@result$ID %<>% factor(levels = (arrange(tum_hallmark@result, desc(N
 
 dat <- tum_hallmark@result |> mutate(updown = (sign(NES) > 0)) |> group_by(updown) |> top_n(n = -10, wt = p.adjust)
 ggplot(data = dat) + 
-  geom_point(mapping = aes(y = ID, x = NES, colour = p.adjust, size = GeneRatio)) + 
-  geom_bar(mapping = aes(y = ID, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  #geom_point(mapping = aes(y = ID, x = NES, colour = p.adjust, size = GeneRatio)) + 
+  #geom_bar(mapping = aes(y = ID, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  #geom_bar(mapping = aes(y = ID, x = NES, fill = -log10(p.adjust)), stat = "identity") +
+  geom_bar(mapping = aes(y = ID, x = NES, fill = updown), stat = "identity") +
   geom_text(data = dat |> filter(NES < 0),
             mapping = aes(x = 0.1, y = ID, label = ID),
             size = 2.5, hjust = 0) +
@@ -60,8 +62,11 @@ ggplot(data = dat) +
             mapping = aes(x = -0.1, y = ID, label = ID),
             size = 2.5, hjust = 1) +
   geom_vline(xintercept = 0) + 
-  scale_color_viridis_c() +
-  labs(title = "Tumor: Hallmark") 
+  #scale_color_viridis_c() +
+  #scale_fill_viridis_c() +
+  scale_fill_manual(values = c("red3", "dodgerblue")) +
+  Seurat::NoLegend() +
+  labs(title = "Tumor: Hallmark")
 ggsave(filename = "tumor_hallmark.pdf", width = 7, height = 5)
 
 tum_c2 <- GSEA(geneList = tumgenelist, TERM2GENE = c2genesets, eps = 1e-100, nPermSimple=10000, pvalueCutoff = 0.05, pAdjustMethod = "BH")
@@ -70,8 +75,9 @@ tum_c2@result$GeneRatio <- (substr(x = tum_c2@result$leading_edge, start = 6, st
 tum_c2@result$ID %<>% factor(levels = (arrange(tum_c2@result, desc(NES)) |> pull(ID)))
 dat <- tum_c2@result |> mutate(updown = (sign(NES) > 0)) |> group_by(updown) |> top_n(n = -10, wt = p.adjust)
 ggplot(data = dat) + 
-  geom_point(mapping = aes(y = ID, x = NES, colour = p.adjust, size = GeneRatio)) + 
-  geom_bar(mapping = aes(y = ID, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  #geom_point(mapping = aes(y = ID, x = NES, colour = p.adjust, size = GeneRatio)) + 
+  #geom_bar(mapping = aes(y = ID, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  geom_bar(mapping = aes(y = ID, x = NES, fill = -log10(p.adjust)), stat = "identity") +
   geom_text(data = dat |> filter(NES < 0),
             mapping = aes(x = 0.1, y = ID, label = ID),
             size = 2, hjust = 0) +
@@ -79,7 +85,8 @@ ggplot(data = dat) +
             mapping = aes(x = -0.1, y = ID, label = ID),
             size = 2, hjust = 1) +
   geom_vline(xintercept = 0) + 
-  scale_color_viridis_c() + 
+  #scale_color_viridis_c() + 
+  scale_fill_viridis_c() +
   theme(axis.title.y = element_blank(), plot.title = element_text(hjust = 0.5)) +
   labs(title = "Tumor: C2") 
 ggsave(filename = "tumor_c2.pdf", width = 10, height = 5)
@@ -90,8 +97,9 @@ tum_c5@result$GeneRatio <- (substr(x = tum_c5@result$leading_edge, start = 6, st
 tum_c5@result$ID %<>% factor(levels = (arrange(tum_c5@result, desc(NES)) |> pull(ID)))
 dat <- tum_c5@result |> mutate(updown = (sign(NES) > 0)) |> group_by(updown) |> top_n(n = -10, wt = p.adjust)
 ggplot(data = dat) + 
-  geom_point(mapping = aes(y = ID, x = NES, colour = p.adjust, size = GeneRatio)) + 
-  geom_bar(mapping = aes(y = ID, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  #geom_point(mapping = aes(y = ID, x = NES, colour = p.adjust, size = GeneRatio)) + 
+  #geom_bar(mapping = aes(y = ID, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  geom_bar(mapping = aes(y = ID, x = NES, fill = -log10(p.adjust)), stat = "identity") +
   geom_text(data = dat |> filter(NES < 0),
             mapping = aes(x = 0.1, y = ID, label = ID),
             size = 2, hjust = 0) +
@@ -99,7 +107,8 @@ ggplot(data = dat) +
             mapping = aes(x = -0.1, y = ID, label = ID),
             size = 2, hjust = 1) +
   geom_vline(xintercept = 0) + 
-  scale_color_viridis_c() + 
+  #scale_color_viridis_c() + 
+  scale_fill_viridis_c() +
   theme(axis.title.y = element_blank(), plot.title = element_text(hjust = 0.5)) +
   labs(title = "Tumor: C5") 
 ggsave(filename = "tumor_c5.pdf", width = 8, height = 5)
@@ -114,8 +123,9 @@ fib_hallmark@result$GeneRatio <- (substr(x = fib_hallmark@result$leading_edge, s
 fib_hallmark@result$ID %<>% factor(levels = (arrange(fib_hallmark@result, desc(NES)) |> pull(ID)))
 dat <- fib_hallmark@result |> mutate(updown = (sign(NES) > 0)) |> group_by(updown) |> top_n(n = -10, wt = p.adjust)
 ggplot(data = dat) + 
-  geom_point(mapping = aes(y = ID, x = NES, colour = p.adjust, size = GeneRatio)) + 
-  geom_bar(mapping = aes(y = ID, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  #geom_point(mapping = aes(y = ID, x = NES, colour = p.adjust, size = GeneRatio)) + 
+  #geom_bar(mapping = aes(y = ID, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  geom_bar(mapping = aes(y = ID, x = NES, fill = -log10(p.adjust)), stat = "identity") +
   geom_text(data = dat |> filter(NES < 0),
             mapping = aes(x = 0.1, y = ID, label = ID),
             size = 2.5, hjust = 0) +
@@ -123,7 +133,8 @@ ggplot(data = dat) +
             mapping = aes(x = -0.1, y = ID, label = ID),
             size = 2.5, hjust = 1) +
   geom_vline(xintercept = 0) + 
-  scale_color_viridis_c() + 
+  #scale_color_viridis_c() + 
+  scale_fill_viridis_c() +
   theme(axis.title.y = element_blank(), plot.title = element_text(hjust = 0.5)) +
   labs(title = "Fibroblast: Hallmark") 
 ggsave(filename = "fibroblast_hallmark.pdf", width = 8, height = 5)
@@ -134,8 +145,9 @@ fib_c2@result$GeneRatio <- (substr(x = fib_c2@result$leading_edge, start = 6, st
 fib_c2@result$ID %<>% factor(levels = (arrange(fib_c2@result, desc(NES)) |> pull(ID)))
 dat <- fib_c2@result |> mutate(updown = (sign(NES) > 0)) |> group_by(updown) |> top_n(n = -10, wt = p.adjust)
 ggplot(data = dat) + 
-  geom_point(mapping = aes(y = ID, x = NES, colour = p.adjust, size = GeneRatio)) + 
-  geom_bar(mapping = aes(y = ID, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  #geom_point(mapping = aes(y = ID, x = NES, colour = p.adjust, size = GeneRatio)) + 
+  #geom_bar(mapping = aes(y = ID, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  geom_bar(mapping = aes(y = ID, x = NES, fill = -log10(p.adjust)), stat = "identity") +
   geom_text(data = dat |> filter(NES < 0),
             mapping = aes(x = 0.1, y = ID, label = ID),
             size = 2.5, hjust = 0) +
@@ -143,7 +155,8 @@ ggplot(data = dat) +
             mapping = aes(x = -0.1, y = ID, label = ID),
             size = 2.5, hjust = 1) +
   geom_vline(xintercept = 0) + 
-  scale_color_viridis_c() + 
+  #scale_color_viridis_c() + 
+  scale_fill_viridis_c() +
   theme(axis.title.y = element_blank(), plot.title = element_text(hjust = 0.5)) +
   labs(title = "Fibroblast: C2") 
 ggsave(filename = "fibroblast_c2.pdf", width = 8.5, height = 5)
@@ -156,8 +169,9 @@ fib_c5@result$ID <- ifelse(test = fib_c5@result$ID == "GOBP_ADAPTIVE_IMMUNE_RESP
 fib_c5@result$ID %<>% factor(levels = (arrange(fib_c5@result, desc(NES)) |> pull(ID)))
 dat <- fib_c5@result |> mutate(updown = (sign(NES) > 0)) |> group_by(updown) |> top_n(n = -10, wt = p.adjust)
 ggplot(data = dat) + 
-  geom_point(mapping = aes(y = ID, x = NES, colour = p.adjust, size = GeneRatio)) + 
-  geom_bar(mapping = aes(y = ID, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  #geom_point(mapping = aes(y = ID, x = NES, colour = p.adjust, size = GeneRatio)) + 
+  #geom_bar(mapping = aes(y = ID, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  geom_bar(mapping = aes(y = ID, x = NES, fill = -log10(p.adjust)), stat = "identity") +
   geom_text(data = dat |> filter(NES < 0),
             mapping = aes(x = 0.1, y = ID, label = ID),
             size = 2.5, hjust = 0) +
@@ -165,7 +179,8 @@ ggplot(data = dat) +
             mapping = aes(x = -0.1, y = ID, label = ID),
             size = 2.5, hjust = 1) +
   geom_vline(xintercept = 0) + 
-  scale_color_viridis_c() + 
+  #scale_color_viridis_c() + 
+  scale_fill_viridis_c() +
   theme(axis.title.y = element_blank(), plot.title = element_text(hjust = 0.5)) +
   labs(title = "Fibroblast: C5")
 ggsave(filename = "fibroblast_c5.pdf", width = 8, height = 5)
@@ -187,8 +202,9 @@ tumbpout@result$GeneRatio <- (substr(x = tumbpout@result$leading_edge, start = 6
 tumbpout@result$Description %<>% factor(levels = (arrange(tumbpout@result, desc(NES)) |> pull(Description)))
 dat <- tumbpout@result |> mutate(updown = (sign(NES) > 0)) |> group_by(updown) |> top_n(n = -10, wt = p.adjust)
 ggplot(data = dat) + 
-  geom_point(mapping = aes(y = Description, x = NES, colour = p.adjust, size = GeneRatio)) + 
-  geom_bar(mapping = aes(y = Description, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  #geom_point(mapping = aes(y = Description, x = NES, colour = p.adjust, size = GeneRatio)) + 
+  #geom_bar(mapping = aes(y = Description, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  geom_bar(mapping = aes(y = Description, x = NES, fill = -log10(p.adjust)), stat = "identity") +
   geom_text(data = dat |> filter(NES < 0),
             mapping = aes(x = 0.1, y = Description, label = Description),
             size = 3, hjust = 0) +
@@ -196,7 +212,8 @@ ggplot(data = dat) +
             mapping = aes(x = -0.1, y = Description, label = Description),
             size = 3, hjust = 1) +
   geom_vline(xintercept = 0) + 
-  scale_color_viridis_c() + 
+  #scale_color_viridis_c() +
+  scale_fill_viridis_c() +
   theme(axis.title.y = element_blank(), plot.title = element_text(hjust = 0.5)) +
   labs(title = "Tumor: BP")
 ggsave("tumor_bp.pdf", width = 8.5, height = 5)
@@ -217,8 +234,9 @@ tummfout@result$Description <- ifelse(test = tummfout@result$ID == "GO:0016709",
 tummfout@result$Description %<>% factor(levels = (arrange(tummfout@result, desc(NES)) |> pull(Description)))
 dat <- tummfout@result |> mutate(updown = (sign(NES) > 0)) |> group_by(updown) |> top_n(n = -10, wt = p.adjust)
 ggplot(data = dat) + 
-  geom_point(mapping = aes(y = Description, x = NES, colour = p.adjust, size = GeneRatio)) + 
-  geom_bar(mapping = aes(y = Description, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  #geom_point(mapping = aes(y = Description, x = NES, colour = p.adjust, size = GeneRatio)) + 
+  #geom_bar(mapping = aes(y = Description, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  geom_bar(mapping = aes(y = Description, x = NES, fill = -log10(p.adjust)), stat = "identity") +
   geom_text(data = dat |> filter(NES < 0),
             mapping = aes(x = 0.1, y = Description, label = Description),
             size = 3, hjust = 0) +
@@ -226,7 +244,8 @@ ggplot(data = dat) +
             mapping = aes(x = -0.1, y = Description, label = Description),
             size = 3, hjust = 1) +
   geom_vline(xintercept = 0) + 
-  scale_color_viridis_c() + 
+  #scale_color_viridis_c() + 
+  scale_fill_viridis_c() +
   theme(axis.title.y = element_blank(), plot.title = element_text(hjust = 0.5)) +
   labs(title = "Tumor: MF")
 ggsave("tumor_mf.pdf", width = 7.5, height = 5)
@@ -247,23 +266,30 @@ fibbpout@result$GeneRatio <- (substr(x = fibbpout@result$leading_edge, start = 6
 fibbpout@result$Description <- ifelse(test = fibbpout@result$Description == "regulation of adaptive immune response based on somatic recombination of immune receptors built from immunoglobulin superfamily domains", 
                                       yes = "regulation of adaptive immune response (shortened)", no = fibbpout@result$Description)
 fibbpout@result$Description <- ifelse(test = fibbpout@result$Description == "adaptive immune response based on somatic recombination of immune receptors built from immunoglobulin superfamily domains", 
-                                      yes = "adaptive immune response (shortened)", no = fibbpout@result$Description)
+                                      yes = "adaptive immunity via somatic recombination of immune receptors", no = fibbpout@result$Description)
+fibbpout@result$Description %<>% stringr::str_to_sentence()
 fibbpout@result$Description %<>% factor(levels = (arrange(fibbpout@result, desc(NES)) |> pull(Description)))
 dat <- fibbpout@result |> mutate(updown = (sign(NES) > 0)) |> group_by(updown) |> top_n(n = -10, wt = p.adjust)
 ggplot(data = dat) + 
-  geom_point(mapping = aes(y = Description, x = NES, colour = p.adjust, size = GeneRatio)) + 
-  geom_bar(mapping = aes(y = Description, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  #geom_point(mapping = aes(y = Description, x = NES, colour = p.adjust, size = GeneRatio)) + 
+  #geom_bar(mapping = aes(y = Description, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
+  geom_bar(mapping = aes(y = Description, x = NES, fill = -log10(p.adjust)), stat = "identity") +
+  #geom_bar(mapping = aes(y = Description, x = NES, fill = updown), stat = "identity") +
   geom_text(data = dat |> filter(NES < 0),
             mapping = aes(x = 0.1, y = Description, label = Description),
-            size = 3, hjust = 0) +
+            size = 2.75, hjust = 0) +
   geom_text(data = dat |> filter(NES > 0),
             mapping = aes(x = -0.1, y = Description, label = Description),
-            size = 3, hjust = 1) +
+            size = 2.75, hjust = 1) +
   geom_vline(xintercept = 0) + 
-  scale_color_viridis_c() + 
+  #scale_color_viridis_c() + 
+  scale_fill_viridis_c() +
+  #scale_fill_manual(values = c("red3", "dodgerblue")) +
   theme(axis.title.y = element_blank(), plot.title = element_text(hjust = 0.5)) +
+  #Seurat::NoLegend() + 
+  theme(legend.title = element_text(size = 8)) +
   labs(title = "Fibroblast: BP")
-ggsave("fibroblast_bp.pdf", width = 7.5, height = 5)
+ggsave("fibroblast_bp_with_padj.pdf", width = 9, height = 5)
 
 fibmfout <- clusterProfiler::gseGO(keyType = "SYMBOL", 
                                    OrgDb = "org.Hs.eg.db", 
@@ -280,8 +306,9 @@ fibmfout@result$GeneRatio <- (substr(x = fibmfout@result$leading_edge, start = 6
 fibmfout@result$Description %<>% factor(levels = (arrange(fibmfout@result, desc(NES)) |> pull(Description)))
 dat <- fibmfout@result |> mutate(updown = (sign(NES) > 0)) |> group_by(updown) |> top_n(n = -10, wt = p.adjust)
 ggplot(data = dat) + 
-  geom_point(mapping = aes(y = Description, x = NES, colour = p.adjust, size = GeneRatio)) + 
-  geom_bar(mapping = aes(y = Description, x = NES), width = 0.025, color = NA, fill = "black", stat = "identity") +
+  #geom_point(mapping = aes(y = Description, x = NES, colour = p.adjust, size = GeneRatio)) + 
+  #geom_bar(mapping = aes(y = Description, x = NES), width = 0.025, color = NA, fill = "black", stat = "identity") +
+  geom_bar(mapping = aes(y = Description, x = NES, fill = -log10(p.adjust)), stat = "identity") +
   geom_text(data = dat |> filter(NES < 0),
             mapping = aes(x = 0.1, y = Description, label = Description),
             size = 3, hjust = 0) +
@@ -289,7 +316,8 @@ ggplot(data = dat) +
             mapping = aes(x = -0.1, y = Description, label = Description),
             size = 3, hjust = 1) +
   geom_vline(xintercept = 0) + 
-  scale_color_viridis_c() + 
+  #scale_color_viridis_c() + 
+  scale_fill_viridis_c() +
   theme(axis.title.y = element_blank(), plot.title = element_text(hjust = 0.5)) +
   labs(title = "Fibroblast: MF")
 ggsave("fibroblast_mf.pdf", width = 7, height = 5)
@@ -340,7 +368,7 @@ for (setgroup in c("tumbpout", "tummfout", "fibbpout", "fibmfout")) {
   cat("... done\n")
 }
 
-# ~ 10 hours
+# ~ 12 hours
 
 sessionInfo()
 # R version 4.4.2 (2024-10-31)

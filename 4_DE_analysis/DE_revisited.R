@@ -5,11 +5,7 @@
 # It seems that using q3 eff lib sizes will yield way less results.
 # Do I need to be normalizing each compartment separately?
 # What if I use the voom precision weights as weights in the lme4 model? 
-# The design makes the results better? 
-
-# Good trick
-theme_set(theme_bw())
-theme_update(panel.grid.minor = element_blank(), panel.grid.major = element_blank())
+# The design makes the results better in limma? How is this happening?
 
 # Clearing environment and making sure we are in the correct micromamba environment.
 rm(list = ls())
@@ -29,6 +25,10 @@ library(ggplot2)
 library(ComplexHeatmap)
 options(mc.cores = 10)
 set.seed(2001)
+
+# Good trick
+theme_set(theme_bw())
+theme_update(panel.grid.minor = element_blank(), panel.grid.major = element_blank())
 
 # Data
 meta <- openxlsx::read.xlsx("meta_cleaned_v5.xlsx")
@@ -150,10 +150,10 @@ library(furrr)
 future::plan(multisession, workers = 10)
 tumormodels <- furrr::future_map(.x = dt, .f = de_model, .progress = T)
 saveRDS(tumormodels, file = "tumordemodels_q3_lmer.RDS")
-#tumormodels <- readRDS("tumordemodels.RDS")
+tumormodels <- readRDS("tumordemodels_tmm.RDS")
 de_test <- function(mods) {
   beta <- fixef(mods$h1)%*%contr
-  pval <- anova(mods$h0, mods$h1)['mods$h1', 'Pr(>Chisq)']
+  pval <- anova(mods$h0, mods$h1)["mods$h1", "Pr(>Chisq)"]
   return(data.frame(beta=beta, pval=pval))
 }
 
@@ -162,11 +162,7 @@ res <- mclapply(tumormodels, de_test, mc.cores = 10)
 res <- bind_rows(res, .id = "target")
 res$fdr <- p.adjust(p = res$pval, method = "BH")
 
-plot(res$beta, -log10(res$fdr))
-
 ggplot(res) + geom_point(mapping = aes(x = beta, y = -log10(fdr)))
-
-install.packages("tableau")
 
 # Start: 
 fibroblastmodels <- mclapply(X = dt, FUN = de_model, mc.cores = 10)
