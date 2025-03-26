@@ -32,13 +32,11 @@ Exploring some possible improvements in the gene selection and normalization pro
 Exploring the `GeoDiff` package, which offers an alternative QC and normalization workflow for this kind of data.
 
 ### 9_GSEA
-Performing gene set enrichment analysis, using the `limma` results from Step 4.
-\nPublication figures: 
+Performing gene set enrichment analysis, using the `limma` results from Step 4. Publication figures: 
 - TROP2 paper Figure S1C (as noted above, this figure may be difficult to reproduce exactly, due to failure to set the seed)
 
 ### 10_final_figures_and_methods
-Creating some specific plots and writing up computational methods for publication.
-\nPublication figures: 
+Creating some specific plots and writing up computational methods for publication. Publication figures: 
 - TROP2 paper Figure 1C and 1E
 - TROP2 paper Figure S1B
 
