@@ -3,7 +3,7 @@ Analysis completed on behalf of the MGH KFCCR Tumor Cartography Core for the Ell
 - Steps 0-8 require that all code is run in a micromamba environment made from the YML file provided in order to reproduce results exactly.
 - Steps 9-10 were completed outside of this environment. Plots from Step 9 specifically will be near impossible to reproduce exactly, since I forgot to set the seed when I made the plots initially and sent them over for the paper.
 
-## Contents
+## Steps
 ### 0_data_setup
 Setting up the unprocessed GeoMx dataset object.
 
@@ -33,12 +33,12 @@ Exploring the `GeoDiff` package, which offers an alternative QC and normalizatio
 
 ### 9_GSEA
 Performing gene set enrichment analysis, using the `limma` results from Step 4.
-Publication figures: 
+\nPublication figures: 
 - TROP2 paper Figure S1C (as noted above, this figure may be difficult to reproduce exactly, due to failure to set the seed)
 
 ### 10_final_figures_and_methods
 Creating some specific plots and writing up computational methods for publication.
-Publication figures: 
+\nPublication figures: 
 - TROP2 paper Figure 1C and 1E
 - TROP2 paper Figure S1B
 
