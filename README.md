@@ -3,6 +3,8 @@ Analysis completed on behalf of the MGH KFCCR Tumor Cartography Core for the Ell
 - Steps 0-8 require that all code is run in a micromamba environment made from the YML file provided in order to reproduce results exactly.
 - Steps 9-10 were completed outside of this environment. Plots from Step 9 specifically will be near impossible to reproduce exactly, since I forgot to set the seed when I made the plots initially and sent them over for the paper.
 
+All raw and/or processed data can be requested by emailing the corresponding author.
+
 ## Steps
 ### 0_data_setup
 Setting up the unprocessed GeoMx dataset object.
