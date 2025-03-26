@@ -1,6 +1,9 @@
 ### GSEA ###
 ## Cole Nawrocki ##
 
+# ** NOTE: I forgot to set the seed when I sent them in for the paper, and I lost the seed. **
+# Thus, exact reproducibility is impossible now. Sorry in advance to anyone who tries to reproduce the plots exactly.
+
 set.seed(2001)
 .libPaths()
 # [1] "/Library/Frameworks/R.framework/Versions/4.4-arm64/Resources/library"
@@ -261,6 +264,7 @@ fibbpout <- clusterProfiler::gseGO(keyType = "SYMBOL",
                                    by = "fgsea", 
                                    eps = 1e-100, 
                                    verbose = T)
+
 fibbpout@result$GeneRatio <- (substr(x = fibbpout@result$leading_edge, start = 6, stop = 7) |> as.numeric())/100
 #write.csv(x = fibbpout |> as.data.frame(), file = "fibroblast_hot_vs_cold_gsea_bp.csv")
 fibbpout@result$Description <- ifelse(test = fibbpout@result$Description == "regulation of adaptive immune response based on somatic recombination of immune receptors built from immunoglobulin superfamily domains", 
@@ -273,23 +277,23 @@ dat <- fibbpout@result |> mutate(updown = (sign(NES) > 0)) |> group_by(updown) |
 ggplot(data = dat) + 
   #geom_point(mapping = aes(y = Description, x = NES, colour = p.adjust, size = GeneRatio)) + 
   #geom_bar(mapping = aes(y = Description, x = NES), width = 0.05, color = NA, fill = "black", stat = "identity") +
-  geom_bar(mapping = aes(y = Description, x = NES, fill = -log10(p.adjust)), stat = "identity") +
-  #geom_bar(mapping = aes(y = Description, x = NES, fill = updown), stat = "identity") +
+  #geom_bar(mapping = aes(y = Description, x = NES, fill = -log10(p.adjust)), stat = "identity") +
+  geom_bar(mapping = aes(y = Description, x = NES, fill = updown), stat = "identity") +
   geom_text(data = dat |> filter(NES < 0),
             mapping = aes(x = 0.1, y = Description, label = Description),
-            size = 2.75, hjust = 0) +
+            size = 3.25, hjust = 0, color = "red3") +
   geom_text(data = dat |> filter(NES > 0),
             mapping = aes(x = -0.1, y = Description, label = Description),
-            size = 2.75, hjust = 1) +
+            size = 3.25, hjust = 1, color = "dodgerblue") +
   geom_vline(xintercept = 0) + 
   #scale_color_viridis_c() + 
-  scale_fill_viridis_c() +
-  #scale_fill_manual(values = c("red3", "dodgerblue")) +
+  #scale_fill_viridis_c() +
+  scale_fill_manual(values = c("red3", "dodgerblue")) +
   theme(axis.title.y = element_blank(), plot.title = element_text(hjust = 0.5)) +
-  #Seurat::NoLegend() + 
+  Seurat::NoLegend() + 
   theme(legend.title = element_text(size = 8)) +
   labs(title = "Fibroblast: BP")
-ggsave("fibroblast_bp_with_padj.pdf", width = 9, height = 5)
+ggsave("fibroblast_bp.pdf", width = 7.75, height = 5)
 
 fibmfout <- clusterProfiler::gseGO(keyType = "SYMBOL", 
                                    OrgDb = "org.Hs.eg.db", 

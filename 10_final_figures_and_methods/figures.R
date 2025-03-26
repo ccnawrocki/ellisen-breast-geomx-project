@@ -1,3 +1,5 @@
+# These are just a couple specific plots that Bogang wanted for the TROP2 paper.
+
 library(ggprism)
 library(ggplot2)
 
@@ -74,17 +76,22 @@ ggplot(data = fibroblast_trop2, mapping = aes(x = hot_cold_group, y = TROP2)) +
 #write.csv(tumor_trop2, "tumor_trop2.csv")
 #write.csv(fibroblast_trop2, "fibroblast_trop2.csv")
 
+dev.off()
+
 ### FIBROBLAST DECONVOLUTION PLOT
 fibdcvnres <- read.csv("6_fibroblast_deconvolution/fibroblast_deconvolution_differential_abundance_testing_results_for_trop2_paper.csv", row.names = 1)
+fibdcvnres$group <- ifelse(fibdcvnres$mean_diff < 0, yes = "hot", no = "cold")
+fibdcvnres$`padj<0.05` <- ifelse(test = fibdcvnres$padj < 0.05, yes = "*", no = "")
 fibdcvnres |> filter(celltype != "hsp_tpCAF") |> 
   ggplot() +
-  geom_bar(mapping = aes(y = celltype, x = mean_diff, fill = padj < 0.05), stat = "identity") + 
-  facet_grid(.~contrast) +
-  scale_fill_manual(values = c("blue", "red")) + 
+  geom_bar(mapping = aes(y = celltype, x = mean_diff, fill = group), stat = "identity") + 
+  geom_text(mapping = aes(y = celltype, x = (mean_diff)+0.025*sign(mean_diff), label = `padj<0.05`), size = 6, vjust = 0.75) +
+  scale_fill_manual(values = c("dodgerblue", "red2")) + 
   ggthemes::theme_few() + 
-  geom_vline(xintercept = 0, linewidth = 0.2)
-
-dev.off()
+  geom_vline(xintercept = 0, linewidth = 0.2) + 
+  labs(title = "Fibroblast deconvolution", subtitle = "cold vs. hot", x = "mean difference (cold - hot)", y = "") + 
+  theme(legend.title = element_blank(), plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
+#ggsave(filename = "updated_S1B.pdf", device = "pdf", width = 6, height = 6)
 
 ### TUMOR VOLCANO PLOT
 tumderes <- read.csv("4_DE_analysis/comparisons_first_cohort/tumor id vs ii+ie limma.csv", row.names = 1)
@@ -104,4 +111,3 @@ ggplot() +
   theme_prism() + theme(legend.position = c(0.15, 0.85), legend.text = element_text(size = 10)) + guides(y = "prism_offset_minor") + 
   scale_color_manual(values = c("black", "dodgerblue", "red3")) +
   labs(x = "log2FC (cold/hot)", y = "-log10(Padj)", title = "Differentially Expressed\nGenes for PanCK+ Cells")
-
