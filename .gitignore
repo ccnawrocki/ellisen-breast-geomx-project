@@ -3,9 +3,14 @@
 .DS_Store
 .DS_Store?
 
+
 # R files #
+###########
 .Rhistory
 .Rproj.user
+*.Rproj
+.Rapp.history
+
 
 # Packages #
 ############
@@ -18,6 +23,7 @@
 *.tar
 *.zip
 
+
 # Data #
 ########
 # No data will be uploaded until after publication
@@ -25,16 +31,21 @@
 *.csv
 *.RDS
 
+
 # Plots #
 #########
 # No plots will be uploaded until after publication
 *.pdf
 *.html
+*.png
+*.svg
+
 
 # Folders #
 ###########
 learning_archive/
 meeting_presentations/
 */learning_and_archived/
+*/renv/
 
 

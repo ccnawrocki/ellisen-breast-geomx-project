@@ -42,3 +42,6 @@ Creating some specific plots and writing up computational methods for publicatio
 - TROP2 paper Figure 1C and 1E
 - TROP2 paper Figure S1B
 
+### 11_stuff_for_presentation
+Doing some basic stuff for a presentation's sake. This is my own independent work.
+
