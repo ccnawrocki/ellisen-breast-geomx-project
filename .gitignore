@@ -10,6 +10,7 @@
 .Rproj.user
 *.Rproj
 .Rapp.history
+.Rprofile
 
 
 # Packages #
